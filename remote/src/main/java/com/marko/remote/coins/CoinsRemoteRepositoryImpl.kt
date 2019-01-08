@@ -1,8 +1,5 @@
 package com.marko.remote.coins
 
-import arrow.effects.IO
-import arrow.effects.fix
-import arrow.effects.instances.io.async.async
 import com.marko.data.coins.CoinsRemoteRepository
 import com.marko.data.entities.CoinData
 import com.marko.domain.entities.CoinId
@@ -13,23 +10,8 @@ class CoinsRemoteRepositoryImpl @Inject constructor(
 	private val coinsService: CoinsService
 ) : CoinsRemoteRepository {
 
-	override fun fetchCoins(): IO<List<CoinData>> =
-		coinsService.getCoins()
-			.async(IO.async())
-			.fix()
-			.flatMap {
-				if (it.isSuccessful) IO.just(it.body() !!.coins)
-				else IO.raiseError(Throwable(message = it.message()))
-			}
-			.map { it.toData() }
+	override suspend fun fetchCoins(): List<CoinData> = coinsService.getCoins().await().coins.toData()
 
-	override fun fetchCoin(coinId: CoinId): IO<CoinData> =
-		coinsService.getCoinDetails(coinId = coinId)
-			.async(IO.async())
-			.fix()
-			.flatMap {
-				if (it.isSuccessful) IO.just(it.body() !!.coin)
-				else IO.raiseError(Throwable(message = it.message()))
-			}
-			.map { it.toData() }
+	override suspend fun fetchCoin(coinId: CoinId): CoinData =
+		coinsService.getCoinDetails(coinId = coinId).await().coin.toData()
 }

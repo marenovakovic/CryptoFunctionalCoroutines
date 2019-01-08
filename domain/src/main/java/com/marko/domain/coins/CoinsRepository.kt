@@ -1,8 +1,8 @@
 package com.marko.domain.coins
 
-import arrow.effects.IO
 import com.marko.domain.entities.CoinEntity
 import com.marko.domain.entities.CoinId
+import com.marko.domain.operations.SuspendedOperation
 
 /**
  * Point of access to [CoinEntity]
@@ -12,16 +12,16 @@ interface CoinsRepository {
 	/**
 	 * Get [CoinEntity] [List]
 	 *
-	 * @return [IO] containing [CoinEntity] [List]
+	 * @return [SuspendedOperation] containing [CoinEntity] [List]
 	 */
-	fun getCoins(): IO<List<CoinEntity>>
+	suspend fun getCoins(): SuspendedOperation<List<CoinEntity>>
 
 	/**
 	 * Get single [CoinEntity]
 	 *
 	 * @param coinId [CoinId]
 	 *
-	 * @return [IO] containing [CoinEntity]
+	 * @return [SuspendedOperation] containing [CoinEntity]
 	 */
-	fun getCoin(coinId: CoinId): IO<CoinEntity>
+	suspend fun getCoin(coinId: CoinId): SuspendedOperation<CoinEntity>
 }

@@ -7,6 +7,7 @@ import com.marko.cache.mappers.toData
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 
 internal class CoinsCacheRepositoryImplTest {
@@ -15,18 +16,18 @@ internal class CoinsCacheRepositoryImplTest {
 	private val repository = CoinsCacheRepositoryImpl(coinsDao = coinsDao)
 
 	@Test
-	fun `test cache repository cache coins result and does it call coinsDao`() {
+	fun `test cache repository cache coins result and does it call coinsDao`() = runBlocking {
 		val coins = CacheCoinFactory.coinCaches
 		stubCoins(coins)
 
-		val result = repository.queryCoins().unsafeRunSync()
+		val result = repository.queryCoins()
 
 		assert(result == coins.toData())
 		verify(exactly = 1) { coinsDao.queryCoins() }
 	}
 
 	@Test
-	fun `test cache repository save coins`() {
+	fun `test cache repository save coins`() = runBlocking {
 		val coins = CacheCoinFactory.coinDatas
 		stubSave()
 
@@ -36,7 +37,7 @@ internal class CoinsCacheRepositoryImplTest {
 	}
 
 	@Test
-	fun `test cache repository save coin`() {
+	fun `test cache repository save coin`() = runBlocking {
 		val coins = CacheCoinFactory.createCoinData()
 		stubSave()
 
@@ -46,13 +47,13 @@ internal class CoinsCacheRepositoryImplTest {
 	}
 
 	@Test
-	fun `test cache repository queryCoin result and does it call coinsDao`() {
+	fun `test cache repository queryCoin result and does it call coinsDao`() = runBlocking {
 		val coinId = 1
 
 		val coin = CacheCoinFactory.createCoinCache(id = coinId)
 		stubCoin(coin)
 
-		val result = repository.queryCoin(coinId = coinId).unsafeRunSync()
+		val result = repository.queryCoin(coinId = coinId)
 
 		assert(result == coin.toData())
 		verify(exactly = 1) { coinsDao.queryCoin(coinId = coinId) }

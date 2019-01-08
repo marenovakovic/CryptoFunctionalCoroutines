@@ -1,9 +1,9 @@
 package com.marko.domain.usecases
 
-import arrow.effects.IO
 import com.marko.domain.coins.CoinsRepository
 import com.marko.domain.entities.CoinEntity
 import com.marko.domain.entities.CoinId
+import com.marko.domain.operations.SuspendedOperation
 import javax.inject.Inject
 
 /**
@@ -15,6 +15,6 @@ class FetchCoin @Inject constructor(
 	private val coinsRepository: CoinsRepository
 ) : UseCase<CoinId, CoinEntity>() {
 
-	override suspend fun execute(parameters: CoinId): IO<CoinEntity> =
+	override suspend fun execute(parameters: CoinId): SuspendedOperation<CoinEntity> =
 		coinsRepository.getCoin(coinId = parameters)
 }

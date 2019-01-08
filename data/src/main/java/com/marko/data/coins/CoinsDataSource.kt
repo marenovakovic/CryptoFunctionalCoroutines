@@ -14,21 +14,21 @@ interface CoinsDataSource {
 	 *
 	 * @param coins [CoinData] [List] list of coins that should be saved
 	 */
-	fun saveCoins(coins: List<CoinData>)
+	suspend fun saveCoins(coins: List<CoinData>)
 
 	/**
 	 * Save coin
 	 *
 	 * @param coin [CoinData] list of coins that should be saved
 	 */
-	fun saveCoin(coin: CoinData)
+	suspend fun saveCoin(coin: CoinData)
 
 	/**
 	 * Get coins
 	 *
 	 * @return [IO] containing fetched [CoinData] [List]
 	 */
-	fun getCoins(): IO<List<CoinData>>
+	suspend fun getCoins(): List<CoinData>
 
 	/**
 	 * Get single coin
@@ -37,5 +37,5 @@ interface CoinsDataSource {
 	 *
 	 * @return [IO] containing [CoinData]
 	 */
-	fun getCoin(coinId: CoinId): IO<CoinData>
+	suspend fun getCoin(coinId: CoinId): CoinData
 }

@@ -1,6 +1,5 @@
 package com.marko.data.coins
 
-import arrow.effects.IO
 import com.marko.data.entities.CoinData
 import com.marko.domain.entities.CoinId
 
@@ -14,28 +13,28 @@ interface CoinsCacheRepository {
 	 *
 	 * @param coins [CoinData] [List] that should be saved into database
 	 */
-	fun saveCoins(coins: List<CoinData>)
+	suspend fun saveCoins(coins: List<CoinData>)
 
 	/**
 	 * Save coin
 	 *
 	 * @param coin [CoinData] list of coins that should be saved into database
 	 */
-	fun saveCoin(coin: CoinData)
+	suspend fun saveCoin(coin: CoinData)
 
 	/**
 	 * Query coins from database
 	 *
-	 * @return [IO] containing queried coins [CoinData] [List]
+	 * @return [CoinData] [List]
 	 */
-	fun queryCoins(): IO<List<CoinData>>
+	suspend fun queryCoins(): List<CoinData>
 
 	/**
 	 * Query coin from database
 	 *
 	 * @param coinId [CoinId]
 	 *
-	 * @return [IO] containing queried coins [CoinData]
+	 * @return [CoinData]
 	 */
-	fun queryCoin(coinId: CoinId): IO<CoinData>
+	suspend fun queryCoin(coinId: CoinId): CoinData
 }

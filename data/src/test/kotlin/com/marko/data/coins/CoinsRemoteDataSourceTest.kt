@@ -1,6 +1,5 @@
 package com.marko.data.coins
 
-import arrow.effects.IO
 import com.marko.data.entities.CoinData
 import com.marko.data.factory.DataCoinFactory
 import io.mockk.coEvery
@@ -21,7 +20,7 @@ internal class CoinsRemoteDataSourceTest {
 			val coins = DataCoinFactory.coinDatas
 			stubCoins(coins)
 
-			val result = remoteDataSource.getCoins().unsafeRunSync()
+			val result = remoteDataSource.getCoins()
 
 			assert(result == coins)
 			coVerify(exactly = 1) { remoteDataSource.getCoins() }
@@ -35,23 +34,24 @@ internal class CoinsRemoteDataSourceTest {
 	}
 
 	@Test
-	fun `test remote data source fetchCoin result and does it call remote repository`() = runBlocking {
-		val coinId = 1
+	fun `test remote data source fetchCoin result and does it call remote repository`() =
+		runBlocking {
+			val coinId = 1
 
-		val coin = DataCoinFactory.createCoinData(id = coinId)
-		stubCoin(coin)
+			val coin = DataCoinFactory.createCoinData(id = coinId)
+			stubCoin(coin)
 
-		val result = remoteDataSource.getCoin(coinId = coinId).unsafeRunSync()
+			val result = remoteDataSource.getCoin(coinId = coinId)
 
-		assert(result == coin)
-		coVerify(exactly = 1) { remoteRepository.fetchCoin(coinId = coinId) }
-	}
+			assert(result == coin)
+			coVerify(exactly = 1) { remoteRepository.fetchCoin(coinId = coinId) }
+		}
 
 	private fun stubCoins(coins: List<CoinData>) {
-		coEvery { remoteRepository.fetchCoins() } returns IO.just(coins)
+		coEvery { remoteRepository.fetchCoins() } returns coins
 	}
 
 	private fun stubCoin(coin: CoinData) {
-		coEvery { remoteRepository.fetchCoin(coinId = any()) } returns IO.just(coin)
+		coEvery { remoteRepository.fetchCoin(coinId = any()) } returns coin
 	}
 }

@@ -1,6 +1,5 @@
 package com.marko.domain.usecases
 
-import arrow.effects.IO
 import com.marko.domain.coins.CoinsRepository
 import com.marko.domain.entities.CoinEntity
 import com.marko.domain.factory.DomainCoinsFactory
@@ -20,7 +19,7 @@ internal class FetchCoinsTest {
 		val coins = DomainCoinsFactory.coinEntities
 		stubCoins(coins)
 
-		fetchCoins()
+		fetchCoins().safeRun()
 
 		coVerify(exactly = 1) { repository.getCoins() }
 	}
@@ -30,13 +29,13 @@ internal class FetchCoinsTest {
 		val coins = DomainCoinsFactory.coinEntities
 		stubCoins(coins)
 
-		val result = fetchCoins().unsafeRunSync()
+		val result = fetchCoins().safeRun()
 
 		assert(result == coins)
 		coVerify(exactly = 1) { repository.getCoins() }
 	}
 
 	private fun stubCoins(coins: List<CoinEntity>) {
-		coEvery { repository.getCoins() } returns IO.just(coins)
+		coEvery { repository.getCoins() } returns { coins }
 	}
 }

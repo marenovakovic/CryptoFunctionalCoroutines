@@ -1,8 +1,7 @@
 package com.marko.remote.coins
 
-import arrow.integrations.retrofit.adapter.CallK
-import arrow.integrations.retrofit.adapter.CallKindAdapterFactory
 import com.google.gson.GsonBuilder
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.marko.domain.entities.CoinId
 import com.marko.remote.entities.CoinResponse
 import com.marko.remote.entities.CoinsResponse
@@ -10,6 +9,8 @@ import com.marko.remote.gson.CoinResponseDeserializer
 import com.marko.remote.gson.CoinsResponseDeserializer
 import kotlinx.coroutines.Deferred
 import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -17,7 +18,7 @@ import retrofit2.http.Query
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-private const val API_KEY = "API_KEY"
+private const val API_KEY = "4312a484-4097-4991-8f28-f02e77bca15b"
 
 /**
  * [Retrofit] service defining how to fetch [CoinsResponse]
@@ -32,7 +33,7 @@ interface CoinsService {
 	 * @return [Deferred] with the server response
 	 */
 	@GET("cryptocurrency/listings/latest")
-	fun getCoins(@Query("CMC_PRO_API_KEY") apiKey: String = API_KEY): CallK<CoinsResponse>
+	fun getCoins(@Query("CMC_PRO_API_KEY") apiKey: String = API_KEY): Deferred<CoinsResponse>
 
 	/**
 	 * Fetch [Coin] details from server
@@ -47,7 +48,7 @@ interface CoinsService {
 	fun getCoinDetails(
 		@Query("CMC_PRO_API_KEY") apiKey: String = API_KEY,
 		@Query("id") coinId: CoinId
-	): CallK<CoinResponse>
+	): Deferred<CoinResponse>
 }
 
 /**
@@ -83,7 +84,7 @@ private val retrofit = Retrofit.Builder()
 	.client(okHttpClient)
 	.baseUrl("https://pro-api.coinmarketcap.com/v1/")
 	.addConverterFactory(GsonConverterFactory.create(gson))
-	.addCallAdapterFactory(CallKindAdapterFactory())
+	.addCallAdapterFactory(CoroutineCallAdapterFactory())
 	.build()
 
 /**

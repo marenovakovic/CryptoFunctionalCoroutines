@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.marko.domain.usecases.FetchCoins
 import com.marko.domain.usecases.invoke
+import com.marko.domain.usecases.unsafeRun
 import com.marko.presentation.base.BaseViewModel
 import com.marko.presentation.dispatchers.CoroutineDispatchers
 import com.marko.presentation.entities.Coin
@@ -37,9 +38,8 @@ class CoinsViewModel @Inject constructor(
 	fun fetch() {
 		launch(context = dispatchers.io) {
 			_result.postValue(Result.Loading)
-			fetchCoins().unsafeRunAsync {
-				println(Thread.currentThread().name)
-				it.fold(
+			fetchCoins().unsafeRun { result ->
+				result.fold(
 					{ _result.postValue(Result.Error(it)) },
 					{ _result.postValue(Result.Success(it.toPresentation())) }
 				)
